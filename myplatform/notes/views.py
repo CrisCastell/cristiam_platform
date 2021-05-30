@@ -23,9 +23,14 @@ class AllNotesList(generics.ListAPIView):
 
     def get_queryset(self):
         queryset = Note.objects.all()
+        query = self.request.GET.get('category', '')
         querysetFiltered = queryset.filter(author=self.request.user.id)
+        
+        if query is not '':
+            category = Category.objects.get(author=self.request.user.id, title=query)
+            querysetFiltered = querysetFiltered.filter(category=category)
+
         querysetFilteredAndSorted = querysetFiltered.order_by('-created_date')
-        query = self.request.GET.get('nombre', '')
         return querysetFilteredAndSorted
 
 
@@ -70,17 +75,7 @@ class AllCategoriesList(generics.ListAPIView):
         querysetFilteredAndSorted = querysetFiltered.order_by('-created_date')
         return querysetFilteredAndSorted
 
-# class CreateCategory(generics.CreateAPIView):
-#     serializer_class = CategoryCreateSerializer
-#     permission_classes = [IsAssigned]
-
-
-@api_view(['POST'])
-@permission_classes((IsAuthenticated,))
-def createCategory(request):
-    data = json.loads(request.body)
-    author          = request.user
-    category = Category(author=author, title=data['title'])
-    category.save()
-    
-    return Response({"status":"Category created succesfully"})
+class CreateCategory(generics.CreateAPIView):
+    queryset = Category.objects.all()
+    serializer_class = CategoryCreateSerializer
+    permission_classes = [IsAssigned]

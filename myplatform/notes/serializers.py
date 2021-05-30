@@ -20,4 +20,22 @@ class CategoryCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Category
-        fields = '__all__'
+        fields = ['title']
+
+    def validate_title(self, value):
+        user = self.context['request'].user
+        if Category.objects.filter(id=user.id, title=value).exists():
+            raise serializers.ValidationError({"message": "This title is already in use."})
+
+        return value
+
+    def create(self, validated_data):
+        user = self.context['request'].user
+        category = Category.objects.create(
+            author=user,
+            title=validated_data['title'],
+        )
+
+        category.save()
+
+        return category

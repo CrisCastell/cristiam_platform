@@ -5,7 +5,7 @@ from accounts.models import Account
 
 class Category(models.Model):
     author  = models.ForeignKey(Account, on_delete=models.CASCADE, related_name="categories")
-    title   = models.CharField(null=True, max_length=255, blank=True)
+    title   = models.CharField(unique=True, max_length=255)
     created_date = models.DateTimeField(verbose_name='date created', auto_now_add=True, null=True)
 
     def __str__(self):
