@@ -79,3 +79,8 @@ class CreateCategory(generics.CreateAPIView):
     queryset = Category.objects.all()
     serializer_class = CategoryCreateSerializer
     permission_classes = [IsAssigned]
+
+class NotesViewset(viewsets.ModelViewSet):
+    queryset = Note.objects.all()
+    serializer_class = NoteSerializer
+    permission_classes = [IsAssigned]

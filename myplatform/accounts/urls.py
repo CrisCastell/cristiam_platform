@@ -1,16 +1,20 @@
-from django.urls import path
+from django.urls import path, include
 from rest_framework.authtoken.views import obtain_auth_token
-from . import views
+from rest_framework import routers
+from .views import *
 
+app_name = 'accounts'
+
+# define the router
+router = routers.DefaultRouter()
+
+
+router.register(r'accounts', AccountDetail, basename="account")
+router.register(r'register', RegisterView, basename="register")
+router.register(r'password', ChangePasswordView, basename="password")
 urlpatterns = [
-    path('<int:pk>'        , views.AccountDetail.as_view()   , name="account"),
-    path('register', views.RegisterView.as_view()         , name="register"),
+    path('', include(router.urls)),
     path('login'   , obtain_auth_token , name="login"),
-    path('password/<int:pk>', views.ChangePasswordView.as_view(), name="change-password"),
-
-
-
-
-    path('image', views.accountImage, name="image"),
-    path('get-id', views.getUserID, name="get-id")
+    path('image', accountImage, name="image"),
+    path('get-id', getUserID, name="get-id")
 ]
